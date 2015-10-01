@@ -1,26 +1,48 @@
-# Pre-Sass / ColaSass / Ideas
+# PreSass / ColaSass / Ideas
 
-ColaSass compiles to vanilla Sass, so all of your existing Sass code is compatible.
+ColaSass will compile to vanilla Sass, so all of your existing Sass code is compatible.
 
-Cola will have a dependency of vanilla Sass functions and mixins used to modify the behavior of Sass.
-
-For example `str-length()` and `length()` will become `length` and compile to `cola-length()`.
-
-The `cola-length()` function will check for a string or list and apply whichever is needed.
+ColaSass will use PostCSS for the syntax modifications and a vanilla Sass library for the behavioral modifications.
 
 ## Why?
 
 I love Sass and the community it has around it, but I want a customized syntax and I want people who don't want to use my syntax to still be able to use my stuff.
+
+## type-of
+
+```scss
+// Input ColaSass
+@debug type-of(solid);
+@debug type-of(null) == null;
+@debug type-of(null) == 'null';
+
+// Output Sass
+@debug cola-type-of(solid); // Output: style
+@debug cola-type-of(null) == null; // Output: true
+@debug cola-type-of(null) == 'null'; // Output: false
+
+// Imported via ColaSass library
+@function cola-type-of($value) {
+  $styles: none hidden dotted dashed solid double groove ridge inset outset;
+  @if index($styles, $value) {
+    @return style;
+  }
+  @else if $value == null {
+    @return null;
+  }
+  @return type-of($value);
+}
+```
 
 ## Lists
 
 Easier syntax for retrieving items from a list.
 
 ```scss
-// Input
+// Input ColaSass
 @debug $list(6);
 
-// Output
+// Output Sass
 @debug nth($list, 6);
 ```
 
@@ -30,7 +52,7 @@ Easier syntax plus added functionality of assigning/replacing a value in a list.
 // Input ColaSass
 $list: 1 2 3;
 $list(6): 12;
-@debug $list; // Output: 1 2 3 null null 12
+@debug $list;
 
 // Output Sass
 $list: 1 2 3;
@@ -46,12 +68,12 @@ $list: cola-list($list, 6, 12);
 ## Maps
 
 ```scss
-// Input
+// Input ColaSass
 @debug $map.key;
 @debug $map('key');
 
 
-// Output
+// Output Sass
 @debug map-get($map, key);
 @debug map-get($map, 'key');
 
@@ -76,38 +98,25 @@ $list: cola-list($list, 6, 12);
 }
 ```
 
-## is Operator
+## is and isnt
 
 ```scss
-// input
+// Input ColaSass
 @if 1 is 2 {
   // ...
 }
 
-// output
+@if 1 isnt 2 {
+  // ...
+}
+
+// Output Sass
 @if 1 == 2 {
   // ...
 }
-```
 
-## null
-`type-of(null)` returns `null`, not a string `'null'`.
-
-```scss
-// Input ColaSass
-@debug type-of(null) == null; // false
-@debug type-of(null) == 'null'; // true
-
-// Output Sass
-@debug cola-type-of(null) == null; // true
-@debug cola-type-of(null) == 'null'; // false
-
-// Imported via ColaSass library
-@function cola-type-of($value) {
-  @if $value == null {
-    @return null;
-  }
-  @return type-of($value);
+@if 1 != 2 {
+  // ...
 }
 ```
 
@@ -132,8 +141,68 @@ etc...
 ```
 
 ## Lazy Evaluation
+
 ```scss
-//
+// Input ColaSass
+@function resolve($$expression) {
+  @return $$expression;
+}
+
+@function convert($value) {
+  @return resolve($value / 16);
+}
+
+// =====
+
+// Output Sass
+@function resolve($expression, $value) {
+  @return call($expression, $value);
+}
+
+@function convert($value) {
+  @return resolve('cola-resolve-expression', $value);
+}
+
+@function cola-resolve-expression($value) {
+  @return $value / 16;
+}
+```
+
+## Lazy Evaluation with comments
+
+```scss
+// Input ColaSass
+// The expression argument here triggers all calls to this function to have
+// this argument extracted into an expression.
+@function resolve($$expression) {
+  // Any time and expression `$$` is used outside an argument, the expression
+  // is evaluated.
+  @return $$expression;
+}
+
+@function convert($value) {
+  // Since the function being called uses an expression for the first argument,
+  // `$value / 16` will be extracted into an expression.
+  // All variables in the expression are passed as arguments for the call.
+  @return resolve($value / 16);
+}
+
+// =====
+
+// Output Sass
+@function resolve($expression, $value) {
+  @return call($expression, $value);
+}
+
+@function convert($value) {
+  @return resolve('cola-resolve-expression', $value);
+}
+
+// The expression function is prepended with `cola` to show that it's owned by
+// ColaSass and appended with `expression` to show that it's an expression.
+@function cola-resolve-expression($value) {
+  @return $value / 16;
+}
 ```
 
 ## @expand
