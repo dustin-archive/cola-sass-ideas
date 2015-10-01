@@ -8,6 +8,10 @@ For example `str-length()` and `length()` will become `length` and compile to `c
 
 The `cola-length()` function will check for a string or list and apply whichever is needed.
 
+## Why?
+
+I love Sass and the community it has around it, but I want a customized syntax and I want people who don't want to use my syntax to still be able to use my stuff.
+
 ## Lists
 
 Easier syntax for retrieving items from a list.
@@ -16,7 +20,7 @@ Easier syntax for retrieving items from a list.
 // Input
 @debug $list(6);
 
-// Iutput
+// Output
 @debug nth($list, 6);
 ```
 
