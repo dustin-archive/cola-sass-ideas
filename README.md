@@ -56,7 +56,6 @@ $list: cola-list($list, 6, 12);
 }
 ```
 
-
 ## Loops
 
 ```scss
@@ -126,6 +125,11 @@ str-length($variable) => $variable.length
 length($variable)     => $variable.length
 
 etc...
+```
+
+## Lazy Evaluation
+```scss
+//
 ```
 
 ## @expand
