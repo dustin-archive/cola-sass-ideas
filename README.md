@@ -4,32 +4,80 @@ ColaSass will compile to vanilla Sass, so all of your existing Sass code is comp
 
 ColaSass will use PostCSS for the syntax modifications and a vanilla Sass library for the behavioral modifications.
 
-## Why?
+## nth
 
-I love Sass and the community it has around it, but I want a customized syntax and I want people who don't want to use my syntax to still be able to use my stuff.
+```scss
+// Input ColaSass
+@debug nth('string', 2);
+@debug nth(s t r i n g, 2);
+
+// Output Sass
+@debug cola-nth('string', 2); // t
+@debug cola-nth(s t r i n g, 2); // t
+
+// Imported via ColaSass library
+@function cola-index($value, $argument) {
+  // ...
+}
+```
+
+## index (str-index)
+
+```scss
+// Input ColaSass
+@debug index(s t r i n g, 't');
+@debug index('string', 't');
+
+// Output Sass
+@debug cola-index(s t r i n g, 't'); // 2
+@debug cola-index('string', 't'); // 2
+
+// Imported via ColaSass library
+@function cola-index($value, $argument) {
+  @if type-of($value) == string {
+    @return str-index($value, $argument);
+  }
+  @return index($value, $argument);
+}
+```
 
 ## type-of
 
 ```scss
 // Input ColaSass
-@debug type-of(solid);
+@debug type-of(!important) == flag;
+@debug type-of(border) == string;
+@debug type-of(solid) == style;
 @debug type-of(null) == null;
-@debug type-of(null) == 'null';
+@debug type-of(em) == length;
+@debug type-of(1) == number;
 
 // Output Sass
-@debug cola-type-of(solid); // Output: style
-@debug cola-type-of(null) == null; // Output: true
-@debug cola-type-of(null) == 'null'; // Output: false
+@debug cola-type-of(!important) == flag; // true
+@debug cola-type-of(border) == string; // true
+@debug cola-type-of(solid) == style; // true
+@debug cola-type-of(null) == null; // true
+@debug cola-type-of(em) == length; // true
+@debug cola-type-of(1) == number; // true
 
 // Imported via ColaSass library
 @function cola-type-of($value) {
   $styles: none hidden dotted dashed solid double groove ridge inset outset;
+  $lengths: px em rem vw vh vmin vmax in cm mm pt pc ex ch;
+
   @if index($styles, $value) {
     @return style;
+  }
+  @else if index($lengths, $value) {
+    @return length;
   }
   @else if $value == null {
     @return null;
   }
+  @else if cola-index($value, '!') {
+    @return flag;
+  }
+
   @return type-of($value);
 }
 ```
@@ -102,22 +150,12 @@ $list: cola-list($list, 6, 12);
 
 ```scss
 // Input ColaSass
-@if 1 is 2 {
-  // ...
-}
-
-@if 1 isnt 2 {
-  // ...
-}
+@debug 1 is 2;
+@debug 1 isnt 2;
 
 // Output Sass
-@if 1 == 2 {
-  // ...
-}
-
-@if 1 != 2 {
-  // ...
-}
+@debug 1 == 2;
+@debug 1 != 2;
 ```
 
 ## Properties
@@ -152,11 +190,9 @@ etc...
   @return resolve($value / 16);
 }
 
-// =====
-
 // Output Sass
-@function resolve($expression, $value) {
-  @return call($expression, $value);
+@function resolve($cola-expression, $value) {
+  @return call($cola-expression, $value);
 }
 
 @function convert($value) {
@@ -187,11 +223,9 @@ etc...
   @return resolve($value / 16);
 }
 
-// =====
-
 // Output Sass
-@function resolve($expression, $value) {
-  @return call($expression, $value);
+@function resolve($cola-expression, $value) {
+  @return call($cola-expression, $value);
 }
 
 @function convert($value) {
