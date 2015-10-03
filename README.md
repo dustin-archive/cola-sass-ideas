@@ -4,6 +4,52 @@ ColaSass will compile to vanilla Sass, so all of your existing Sass code is comp
 
 ColaSass will use PostCSS for the syntax modifications and a vanilla Sass library for the behavioral modifications.
 
+## nil
+
+```scss
+// Input ColaSass
+@debug nil;
+
+// Output Sass
+@debug $cola-nil;
+
+// Imported via ColaSass library
+$cola-nil: unquote('');
+```
+
+## length
+
+```scss
+// Input ColaSass
+@debug length(s t r i n g);
+@debug length('string');
+
+// Output Sass
+@debug cola-length(s t r i n g); // 6
+@debug cola-length('string');    // 6
+
+// Imported via ColaSass library
+@function cola-length($value) {
+  @if type-of($value) == string {
+    @return str-length($value);
+  }
+
+  @return length($value);
+}
+```
+
+## iteration
+
+```scss
+// Input ColaSass
+@debug $i++;
+@debug $i--;
+
+// Output Sass
+@debug $i: $i + 1;
+@debug $i: $i - 1;
+```
+
 ## nth
 
 ```scss
@@ -12,7 +58,7 @@ ColaSass will use PostCSS for the syntax modifications and a vanilla Sass librar
 @debug nth(s t r i n g, 2);
 
 // Output Sass
-@debug cola-nth('string', 2); // t
+@debug cola-nth('string', 2);    // t
 @debug cola-nth(s t r i n g, 2); // t
 
 // Imported via ColaSass library
@@ -30,7 +76,7 @@ ColaSass will use PostCSS for the syntax modifications and a vanilla Sass librar
 
 // Output Sass
 @debug cola-index(s t r i n g, 't'); // 2
-@debug cola-index('string', 't'); // 2
+@debug cola-index('string', 't');    // 2
 
 // Imported via ColaSass library
 @function cola-index($value, $argument) {
@@ -45,37 +91,42 @@ ColaSass will use PostCSS for the syntax modifications and a vanilla Sass librar
 
 ```scss
 // Input ColaSass
-@debug type-of(!important) == flag;
-@debug type-of(border) == string;
 @debug type-of(solid) == style;
-@debug type-of(null) == null;
 @debug type-of(em) == length;
+@debug type-of(!important) == flag;
+@debug type-of(null) == null;
+@debug type-of('') == nil;
+@debug type-of(border) == string;
 @debug type-of(1) == number;
 
 // Output Sass
-@debug cola-type-of(!important) == flag; // true
-@debug cola-type-of(border) == string; // true
-@debug cola-type-of(solid) == style; // true
-@debug cola-type-of(null) == null; // true
-@debug cola-type-of(em) == length; // true
-@debug cola-type-of(1) == number; // true
+@debug type-of(solid) == style;     // true
+@debug type-of(em) == length;       // true
+@debug type-of(!important) == flag; // true
+@debug type-of(null) == null;       // true
+@debug type-of('') == nil;          // true
+@debug type-of(border) == string;   // true
+@debug type-of(1) == number;        // true
 
 // Imported via ColaSass library
-@function cola-type-of($value) {
+@function save-type-of($value) {
   $styles: none hidden dotted dashed solid double groove ridge inset outset;
   $lengths: px em rem vw vh vmin vmax in cm mm pt pc ex ch;
 
-  @if index($styles, $value) {
+  @if save-index($styles, $value) {
     @return style;
   }
-  @else if index($lengths, $value) {
+  @else if save-index($lengths, $value) {
     @return length;
+  }
+  @else if save-index($value, '!') {
+    @return flag;
   }
   @else if $value == null {
     @return null;
   }
-  @else if cola-index($value, '!') {
-    @return flag;
+  @else if save-length($value) == 0 {
+    @return nil;
   }
 
   @return type-of($value);
