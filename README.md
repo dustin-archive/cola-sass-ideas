@@ -1,8 +1,20 @@
-# PreSass / ColaSass / Ideas
+#  ColaSass - Ideas
 
 ColaSass will compile to vanilla Sass, so all of your existing Sass code is compatible.
 
 ColaSass will use PostCSS for the syntax modifications and a vanilla Sass library for the behavioral modifications.
+
+## Quick example
+
+Complexity is dramatically reduced.
+
+```scss
+// Input ColaSass
+$results(index): $results(index).join($i, comma);
+
+// Output Sass
+$results: map-merge($results, (index: join(map-get($results, index), $i, comma)));
+```
 
 ## Syntax changes
 
@@ -138,20 +150,89 @@ etc...
  + Library available: [Yes]()
  + Syntax available: No
 
+#### List get value
+
 ```scss
-// Input ColaSass
-$list: 1 2 3;
-$list(6): 12;
-@debug $list;
+//
+// + Input ColaSass
+// =============================================================================
 
-// Output Sass
-$list: 1 2 3;
-$list: cola-list($list, 6, 12);
-@debug $list; // Output: 1 2 3 null null 12
+$list-1: 1 2 3 null null 12;
+$list-2: 1 2 3 null null 12 null 12 null 12;
+$list-3: 1 2 3 null null (null (null 12));
 
-// Imported via ColaSass library
-@function cola-list($list, $index, $value) {
-  // ...
+.test {
+  content: $list-1(6);
+  content: $list-2(6 4 3);
+  content: $list-3(6:4:3);
+}
+
+//
+// + Output Sass
+// =============================================================================
+
+.test {
+  content: cola-list-get($list-1, 6, 12);
+  content: cola-list-get($list-2, 6 8 10, 12);
+  content: cola-list-get-nested($list-3, 6 2 2, 12);
+}
+
+//
+// + Output CSS
+// =============================================================================
+
+.test {
+  content: 12;       // 12
+  content: 12 12 12; // 12 12 12;
+  content: 12;       // 12;
+}
+```
+
+#### List set value
+
+```scss
+//
+// + Input ColaSass
+// =============================================================================
+
+$list-1: 1 2 3;
+$list-2: 1 2 3;
+$list-3: 1 2 3;
+
+.test {
+  $list-1(6): 12;
+  $list-2(6 4 3): 12;
+  $list-3(6:4:3): 12;
+  content: $list-1;
+  content: $list-2;
+  content: $list-3;
+}
+
+//
+// + Output Sass
+// =============================================================================
+
+$list-1: 1 2 3;
+$list-2: 1 2 3;
+$list-3: 1 2 3;
+
+.test {
+  $list-1: cola-list-set($list-1, 6, 12);
+  $list-2: cola-list-set($list-2, 6 8 10, 12);
+  $list-3: cola-list-set-nested($list-3, 6 2 2, 12);
+  content: $list-1;
+  content: $list-2;
+  content: $list-3;
+}
+
+//
+// + Output CSS
+// =============================================================================
+
+.test {
+  content: 1 2 3 12;       // 1 2 3 null null 12
+  content: 1 2 3 12 12 12; // 1 2 3 null null 12 null 12 null 12;
+  content: 1 2 3 12;       // 1 2 3 null null (null (null 12));
 }
 ```
 
@@ -161,13 +242,14 @@ $list: cola-list($list, 6, 12);
 
 ```scss
 // Input ColaSass
-@debug $map.key;
-@debug $map('key');
+@debug $map(key);
+@debug $map(key): value;
 
 // Output Sass
 @debug map-get($map, key);
-@debug map-get($map, 'key');
+@debug map-merge(map, (key:value));
 
+// Imported via ColaSass Library
 @function cola-map($map, $key, $value) {
   // ...
 }
@@ -188,15 +270,29 @@ $list: cola-list($list, 6, 12);
 @debug type-of(1)          == number;
 
 // Output Sass
-@debug type-of(solid)      == style;  // true
-@debug type-of(em)         == length; // true
-@debug type-of(!important) == flag;   // true
-@debug type-of(null)       == null;   // true
-@debug type-of(border)     == string; // true
-@debug type-of(1)          == number; // true
+@debug cola-type-of(solid)      == style;  // true
+@debug cola-type-of(em)         == length; // true
+@debug cola-type-of(!important) == flag;   // true
+@debug cola-type-of(null)       == null;   // true
+@debug cola-type-of(border)     == string; // true
+@debug cola-type-of(1)          == number; // true
 
 // Imported via ColaSass library
 @function cola-type-of($value) {
+  // ...
+}
+```
+
+### join
++ Library available: [Yes]()
+
+```scss
+// Input ColaSass
+
+// Output Sass
+
+// Imported via ColaSass library
+@function cola-join($value) {
   // ...
 }
 ```
