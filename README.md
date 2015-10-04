@@ -4,41 +4,10 @@ ColaSass will compile to vanilla Sass, so all of your existing Sass code is comp
 
 ColaSass will use PostCSS for the syntax modifications and a vanilla Sass library for the behavioral modifications.
 
-## nil
+## Syntax changes
 
-```scss
-// Input ColaSass
-@debug nil;
-
-// Output Sass
-@debug $cola-nil;
-
-// Imported via ColaSass library
-$cola-nil: unquote('');
-```
-
-## length
-
-```scss
-// Input ColaSass
-@debug length(s t r i n g);
-@debug length('string');
-
-// Output Sass
-@debug cola-length(s t r i n g); // 6
-@debug cola-length('string');    // 6
-
-// Imported via ColaSass library
-@function cola-length($value) {
-  @if type-of($value) == string {
-    @return str-length($value);
-  }
-
-  @return length($value);
-}
-```
-
-## iteration
+### iteration
++ Syntax available: No
 
 ```scss
 // Input ColaSass
@@ -50,138 +19,21 @@ $cola-nil: unquote('');
 @debug $i: $i - 1;
 ```
 
-## nth
+### is and isnt
++ Syntax available: No
 
 ```scss
 // Input ColaSass
-@debug nth('string', 2);
-@debug nth(s t r i n g, 2);
+@debug 1 is 2;
+@debug 1 isnt 2;
 
 // Output Sass
-@debug cola-nth('string', 2);    // t
-@debug cola-nth(s t r i n g, 2); // t
-
-// Imported via ColaSass library
-@function cola-index($value, $argument) {
-  // ...
-}
+@debug 1 == 2;
+@debug 1 != 2;
 ```
 
-## index (str-index)
-
-```scss
-// Input ColaSass
-@debug index(s t r i n g, 't');
-@debug index('string', 't');
-
-// Output Sass
-@debug cola-index(s t r i n g, 't'); // 2
-@debug cola-index('string', 't');    // 2
-
-// Imported via ColaSass library
-@function cola-index($value, $argument) {
-  @if type-of($value) == string {
-    @return str-index($value, $argument);
-  }
-  @return index($value, $argument);
-}
-```
-
-## type-of
-
-```scss
-// Input ColaSass
-@debug type-of(solid) == style;
-@debug type-of(em) == length;
-@debug type-of(!important) == flag;
-@debug type-of(null) == null;
-@debug type-of('') == nil;
-@debug type-of(border) == string;
-@debug type-of(1) == number;
-
-// Output Sass
-@debug type-of(solid) == style;     // true
-@debug type-of(em) == length;       // true
-@debug type-of(!important) == flag; // true
-@debug type-of(null) == null;       // true
-@debug type-of('') == nil;          // true
-@debug type-of(border) == string;   // true
-@debug type-of(1) == number;        // true
-
-// Imported via ColaSass library
-@function save-type-of($value) {
-  $styles: none hidden dotted dashed solid double groove ridge inset outset;
-  $lengths: px em rem vw vh vmin vmax in cm mm pt pc ex ch;
-
-  @if save-index($styles, $value) {
-    @return style;
-  }
-  @else if save-index($lengths, $value) {
-    @return length;
-  }
-  @else if save-index($value, '!') {
-    @return flag;
-  }
-  @else if $value == null {
-    @return null;
-  }
-  @else if save-length($value) == 0 {
-    @return nil;
-  }
-
-  @return type-of($value);
-}
-```
-
-## Lists
-
-Easier syntax for retrieving items from a list.
-
-```scss
-// Input ColaSass
-@debug $list(6);
-
-// Output Sass
-@debug nth($list, 6);
-```
-
-Easier syntax plus added functionality of assigning/replacing a value in a list. If an index is specified that's longer than the list, the items in-between are set to null;
-
-```scss
-// Input ColaSass
-$list: 1 2 3;
-$list(6): 12;
-@debug $list;
-
-// Output Sass
-$list: 1 2 3;
-$list: cola-list($list, 6, 12);
-@debug $list; // Output: 1 2 3 null null 12
-
-// Imported via ColaSass library
-@function cola-list($list, $index, $value) {
-  // ...
-}
-```
-
-## Maps
-
-```scss
-// Input ColaSass
-@debug $map.key;
-@debug $map('key');
-
-
-// Output Sass
-@debug map-get($map, key);
-@debug map-get($map, 'key');
-
-@function cola-map($map, $key, $value) {
-  // ...
-}
-```
-
-## Loops
+### Loops
++ Syntax available: No
 
 ```scss
 // Input ColaSass
@@ -197,39 +49,8 @@ $list: cola-list($list, 6, 12);
 }
 ```
 
-## is and isnt
-
-```scss
-// Input ColaSass
-@debug 1 is 2;
-@debug 1 isnt 2;
-
-// Output Sass
-@debug 1 == 2;
-@debug 1 != 2;
-```
-
-## Properties
-
-```scss
-red($variable)        =>  $variable.red
-green($variable)      =>  $variable.green
-blue($variable)       =>  $variable.blue
-
-hue($variable)        =>  $variable.hue
-saturation($variable) =>  $variable.saturation
-lightness($variable)  =>  $variable.lightness
-
-unquote($variable)    =>  $variable.unquote
-quote($variable)      =>  $variable.quote
-
-str-length($variable) => $variable.length
-length($variable)     => $variable.length
-
-etc...
-```
-
-## Lazy Evaluation
+### Lazy Evaluation
++ Syntax available: No
 
 ```scss
 // Input ColaSass
@@ -255,7 +76,7 @@ etc...
 }
 ```
 
-## Lazy Evaluation with comments
+#### Lazy Evaluation with comments
 
 ```scss
 // Input ColaSass
@@ -289,6 +110,172 @@ etc...
   @return $value / 16;
 }
 ```
+
+### Properties
++ Syntax available: No
+
+```scss
+red($variable)        =>  $variable.red
+green($variable)      =>  $variable.green
+blue($variable)       =>  $variable.blue
+
+hue($variable)        =>  $variable.hue
+saturation($variable) =>  $variable.saturation
+lightness($variable)  =>  $variable.lightness
+
+unquote($variable)    =>  $variable.unquote
+quote($variable)      =>  $variable.quote
+
+str-length($variable) => $variable.length
+length($variable)     => $variable.length
+
+etc...
+```
+
+## Syntax modifications (Require ColaSass Library)
+
+### Lists
+ + Library available: [Yes]()
+ + Syntax available: No
+
+```scss
+// Input ColaSass
+$list: 1 2 3;
+$list(6): 12;
+@debug $list;
+
+// Output Sass
+$list: 1 2 3;
+$list: cola-list($list, 6, 12);
+@debug $list; // Output: 1 2 3 null null 12
+
+// Imported via ColaSass library
+@function cola-list($list, $index, $value) {
+  // ...
+}
+```
+
+### Maps
++ Library available: No
++ Syntax available: No
+
+```scss
+// Input ColaSass
+@debug $map.key;
+@debug $map('key');
+
+// Output Sass
+@debug map-get($map, key);
+@debug map-get($map, 'key');
+
+@function cola-map($map, $key, $value) {
+  // ...
+}
+```
+
+## Function modifications (Require ColaSass Library)
+
+### type-of
++ Library available: [Yes]()
+
+```scss
+// Input ColaSass
+@debug type-of(solid)      == style;
+@debug type-of(em)         == length;
+@debug type-of(!important) == flag;
+@debug type-of(null)       == null;
+@debug type-of(border)     == string;
+@debug type-of(1)          == number;
+
+// Output Sass
+@debug type-of(solid)      == style;  // true
+@debug type-of(em)         == length; // true
+@debug type-of(!important) == flag;   // true
+@debug type-of(null)       == null;   // true
+@debug type-of(border)     == string; // true
+@debug type-of(1)          == number; // true
+
+// Imported via ColaSass library
+@function cola-type-of($value) {
+  // ...
+}
+```
+
+## Rejected Ideas
+
+### nil
+
+No valid use case.
+
+```scss
+// Input ColaSass
+@debug nil;
+
+// Output Sass
+@debug $cola-nil;
+
+// Imported via ColaSass library
+$cola-nil: unquote('');
+```
+
+### length
+
+How would you check the length of a list with one item?
+
+```scss
+// Input ColaSass
+@debug length(s t r i n g);
+@debug length('string');
+
+// Output Sass
+@debug cola-length(s t r i n g); // 6
+@debug cola-length('string');    // 6
+
+// Imported via ColaSass library
+@function cola-length($value) {
+  // ...
+}
+```
+
+### nth
+
+How would you get the first item of a list with one item?
+
+```scss
+// Input ColaSass
+@debug nth('string', 2);
+@debug nth(s t r i n g, 2);
+
+// Output Sass
+@debug cola-nth('string', 2);    // t
+@debug cola-nth(s t r i n g, 2); // t
+
+// Imported via ColaSass library
+@function cola-index($value, $argument) {
+  // ...
+}
+```
+
+### index
+
+How would you get the first index of a list with one item?
+
+```scss
+// Input ColaSass
+@debug index(s t r i n g, 't');
+@debug index('string', 't');
+
+// Output Sass
+@debug cola-index(s t r i n g, 't'); // 2
+@debug cola-index('string', 't');    // 2
+
+// Imported via ColaSass library
+@function cola-index($value, $argument) {
+  // ...
+}
+```
+
+# Misc Ideas
 
 ## @expand
 PostCSS / Gulp Task
