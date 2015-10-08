@@ -253,10 +253,12 @@ $list-3: 1 2 3;
 // Input ColaSass
 @debug $map(key);
 @debug $map(key): value;
+@debug $lists.longest.(index); // largest function returns a map
 
 // Output Sass
 @debug map-get($map, key);
 @debug map-merge(map, (key:value));
+@debug map-get(largest($list), index);
 
 // Imported via ColaSass Library
 @function cola-map($map, $key, $value) {
