@@ -132,6 +132,25 @@ $results: map-merge($results, (index: join(map-get($results, index), $i, comma))
 }
 ```
 
+### Methods
++ Syntax available: No
+
+```scss
+// Input ColaSass
+$one.join: $two;
+$one.append: $two;
+$one.merge: $two;
+$one.zip: $two;
+$one.call: $two;
+
+// Output Sass
+$one: join($one, $two);
+$one: append($one, $two);
+$one: map-merge($one, $two);
+$one: zip($one, $two);
+$one: call($one, $two);
+```
+
 ### Properties
 + Syntax available: No
 
