@@ -1,11 +1,20 @@
 #  ColaSass - Ideas
-
 ColaSass will compile to vanilla Sass, so all of your existing Sass code is compatible.
 
 ColaSass will use PostCSS for the syntax modifications and a vanilla Sass library for the behavioral modifications.
 
-## Quick example
+## Vanilla functions
+Prefix any function with `sass` to get vanilla sass functionality.
 
+```scss
+// Input ColaSass
+@debug sass-type-of(solid); // string
+
+// Output Sass
+@debug type-of(solid); // string
+```
+
+## Quick example
 Complexity is dramatically reduced.
 
 ```scss
@@ -163,8 +172,8 @@ $list-3: 1 2 3 null null (null (null 12));
 
 .test {
   content: $list-1(6);
-  content: $list-2(6 4 3);
-  content: $list-3(6:4:3);
+  content: $list-2(6 8 10);
+  content: $list-3(6:2:2);
 }
 
 //
@@ -172,9 +181,9 @@ $list-3: 1 2 3 null null (null (null 12));
 // =============================================================================
 
 .test {
-  content: cola-list-get($list-1, 6, 12);
-  content: cola-list-get($list-2, 6 8 10, 12);
-  content: cola-list-get-nested($list-3, 6 2 2, 12);
+  content: cola-list-get($list-1, 6);
+  content: cola-list-get($list-2, 6 8 10);
+  content: cola-list-get-nested($list-3, 6 2 2);
 }
 
 //
@@ -201,8 +210,8 @@ $list-3: 1 2 3;
 
 .test {
   $list-1(6): 12;
-  $list-2(6 4 3): 12;
-  $list-3(6:4:3): 12;
+  $list-2(6 8 10): 12;
+  $list-3(6:2:2): 12;
   content: $list-1;
   content: $list-2;
   content: $list-3;
@@ -300,7 +309,6 @@ $list-3: 1 2 3;
 ## Rejected Ideas
 
 ### nil
-
 No valid use case.
 
 ```scss
@@ -315,7 +323,6 @@ $cola-nil: unquote('');
 ```
 
 ### length
-
 How would you check the length of a list with one item?
 
 ```scss
@@ -334,7 +341,6 @@ How would you check the length of a list with one item?
 ```
 
 ### nth
-
 How would you get the first item of a list with one item?
 
 ```scss
@@ -353,7 +359,6 @@ How would you get the first item of a list with one item?
 ```
 
 ### index
-
 How would you get the first index of a list with one item?
 
 ```scss
