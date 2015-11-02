@@ -58,15 +58,32 @@ $results: map-merge($results, (index: join(map-get($results, index), $i, comma))
 
 ```scss
 // Input ColaSass
+@for $i from 1 through $half {
+  // ...
+}
+
+// Output Sass
+@if floor($variable) == $variable { // Check for floating points.
+  @for $i from 1 through $variable {
+    // ...
+  }
+}
+```
+
+```scss
+// Input ColaSass
 @each $item, $i in $list {
   // ...
 }
 
 // Output Sass
-@for $i from 1 through length($list) {
-  $item: nth($list, $i);
+$cola-through: length($list); // Store functions used in the loop in variables.
+@if floor($cola-through) == $cola-through { // Check for floating points.
+  @for $i from 1 through $cola-through {
+    $item: nth($list, $i);
 
-  // ...
+    // ...
+  }
 }
 ```
 
